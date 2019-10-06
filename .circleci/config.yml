@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.3.0
-  kube-orb: kiddo3/kubernetes@dev:0.0.1
+  kube-orb: kiddo3/kubernetes@dev:secret
 
 jobs:
   build:
@@ -20,24 +20,37 @@ jobs:
               && chmod +x minikube
             sudo cp minikube /usr/local/bin && rm minikube
             sudo -E minikube start --vm-driver=none --cpus 2 --memory 2048
-      - kube-orb/create-or-update-resource:
-          resource-file-path: "tests/nginx-deployment/deployment.yaml"
-          resource-name: "deployment/nginx-deployment"
-          get-rollout-status: true
+      - run: 
+          name: Create secret
+          command: |
+            kubectl create secret generic test --from-literal=key1=aaa
+      - kube-orb/update-secret:
+          secret-name: test
+          key-name: "key1"
+          key-value: "ooo"
           show-kubectl-command: true
-      - kube-orb/update-container-image:
-          resource-name: "deployment/nginx-deployment"
-          container-image-updates: "nginx=nginx:1.17-alpine"
-          get-rollout-status: true
-          record: true
-      - kube-orb/rollback:
-          resource-name: "deployment/nginx-deployment"
-          get-rollout-status: true
-      - kube-orb/delete-resource:
-          resource-types: "deployments"
-          resource-names: "nginx-deployment"
-          now: true
-          wait: true
+      - run:
+          name: Get secret
+          command: |
+            kubectl get secret test -o=yaml
+      # - kube-orb/create-or-update-resource:
+      #     resource-file-path: "tests/nginx-deployment/deployment.yaml"
+      #     resource-name: "deployment/nginx-deployment"
+      #     get-rollout-status: true
+      #     show-kubectl-command: true
+      # - kube-orb/update-container-image:
+      #     resource-name: "deployment/nginx-deployment"
+      #     container-image-updates: "nginx=nginx:1.17-alpine"
+      #     get-rollout-status: true
+      #     record: true
+      # - kube-orb/rollback:
+      #     resource-name: "deployment/nginx-deployment"
+      #     get-rollout-status: true
+      # - kube-orb/delete-resource:
+      #     resource-types: "deployments"
+      #     resource-names: "nginx-deployment"
+      #     now: true
+      #     wait: true
 workflows:
   version: 2
   test_orb:
