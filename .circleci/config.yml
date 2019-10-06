@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.3.0
-  kube-orb: kiddo3/kubernetes@dev:secret-0.0.4
+  kube-orb: kiddo3/kubernetes@dev:secret-0.0.5
 
 jobs:
   build:
