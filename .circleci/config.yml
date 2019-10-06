@@ -30,7 +30,7 @@ jobs:
           container-image-updates: "nginx=nginx:1.9.1"
           get-rollout-status: true
           record: true
-      - kube-orb/update-container-image:
+      - kube-orb/rollback:
           resource-name: "deployment/nginx-deployment"
           get-rollout-status: true
       - kube-orb/delete-resource:
