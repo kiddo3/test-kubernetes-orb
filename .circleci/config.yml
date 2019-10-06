@@ -27,7 +27,7 @@ jobs:
           show-kubectl-command: true
       - kube-orb/update-container-image:
           resource-name: "deployment/nginx-deployment"
-          container-image-updates: "nginx=nginx:1.9.1"
+          container-image-updates: "nginx=nginx:1.17-alpine"
           get-rollout-status: true
           record: true
       - kube-orb/rollback:
